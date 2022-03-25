@@ -1,11 +1,9 @@
 <template>
-
-
   <div class="home">
     <h2>Villes par pays</h2>
     <div class="row">
         <label for="country">Pays:</label>
-            <select class="form-control">
+            <select id="countrySelector" class="form-control" @change="fetchCities">
                 <option disabled value="0" selected>Choisissez un pays</option>
                 <option v-for="country in data.countries" :key="country.id" :value="country._links.cities.href">
                 {{ country.name }}
@@ -14,15 +12,19 @@
     </div>
     <hr/>
     <div class="row">
+      <VillesParPaysList :cities="data.cities"/>
     </div>   
   </div>
 </template>
 
 <script setup>
 import { reactive, onMounted } from "vue";
+// @ is an alias to /src
+import VillesParPaysList from "@/components/VillesParPaysList.vue";
 
 let data = reactive({
-  countries: []
+  countries: [],
+  cities: []
 });
 
 // Utilise l'API REST auto-générée pour récupérer les pays
@@ -31,6 +33,18 @@ function fetchCountries() {
     .then((response) => response.json())
     .then((json) => {
       data.countries = json._embedded.countries;
+    })
+    .catch((error) => alert(error));
+}
+
+// récupérer les villes
+function fetchCities() { //link : url des villes appartenant au pays sélectionné
+  // Utilise l'API ad-hoc pour avoir le pays de chaque ville
+  let link = document.getElementById('countrySelector').value
+  fetch(link)
+    .then((response) => response.json())
+    .then((json) => {
+      data.cities = json._embedded.cities;
     })
     .catch((error) => alert(error));
 }
