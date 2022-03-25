@@ -1,4 +1,6 @@
 <template>
+
+
   <div class="home">
     <h2>Villes par pays</h2>
     <div class="row">
@@ -12,7 +14,7 @@
     </div>
     <hr/>
     <div class="row">
-      <VillesParPaysList :cities="data.cities"/>
+      <VillesParPaysList :cities="data.cities" @delete="deleteCity"/>
     </div>   
   </div>
 </template>
@@ -47,6 +49,15 @@ function fetchCities() { //link : url des villes appartenant au pays sélectionn
       data.cities = json._embedded.cities;
     })
     .catch((error) => alert(error));
+}
+
+//supprimer une ville
+function deleteCity(link) { //link : url de la ville à supprimer
+  console.log(link)
+  fetch(link, {method: "DELETE"})
+    .then((response) => { fetchCities();})
+    .catch((error) => console.log(error));
+    
 }
 
 // Au chargement du composant
